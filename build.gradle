@@ -1,0 +1,39 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+group 'com.cegeka.devops'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+task copyDocs(type: Copy) {
+    from 'src/main/doc'
+    into "$buildDir/documentation"
+    exclude '*.gif'
+    from('src/main/doc') {
+        include 'myDoc.md'
+        filter(ReplaceTokens, tokens: [VERSION: version])
+    }
+}
+
+task copyDocs2(type: Copy) {
+    from 'src/main/doc'
+    include 'myDoc.md'
+    into "$buildDir/documentation"
+}
+
+task copyDocs3(type: Copy) {
+    from('src/main/doc') {
+        exclude '*.gif'
+    }
+    into "$buildDir/documentation"
+}
+
+task runMain(type: JavaExec) {
+        group = 'application'
+        dependsOn 'classes'
+        main = 'HelloWorld'
+        classpath = sourceSets.main.runtimeClasspath
+    doFirst {
+        args = [System.getProperty('name')]
+    }
+}
